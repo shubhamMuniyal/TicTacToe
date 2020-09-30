@@ -1,6 +1,6 @@
 let players=['X', 'O'];
-let human='O';
-let ai='X';
+let human='X';
+let ai='O';
 let positionOccupied=0;
 
 let board=[
@@ -9,8 +9,7 @@ let board=[
     ['', '', ''],
 ];
 
-let available=[];
-let currentPlayer, count=0;
+let currentPlayer;
 
 function setup() {
     createCanvas(500, 400);
@@ -20,16 +19,25 @@ function setup() {
 }
 
 function nextTurn(){
-    available=[];
+    let bestScore=1000;
+    let bestMove;
+
     for(let i=0;i<board.length;i++){
         for(let j=0;j<board[i].length;j++){
             if(board[i][j] == ''){
-                available.push( { i,j } );
+                board[i][j]=ai;
+                let score=minimax(true, 0);
+                console.log(score+" score");
+                if(bestScore>score){
+                    bestScore=score;
+                    bestMove={i,j};
+                }
+                board[i][j]='';
             }
         }
     }
-    let move=random(available);
-    board[move.i][move.j]=ai;
+    
+    board[bestMove.i][bestMove.j]=ai;
     currentPlayer=human;
     // mousePressed();
     
@@ -42,16 +50,7 @@ function mousePressed(){
         if(board[i][j]==''){
             board[i][j]=human;
             currentPlayer=ai;
-            // nextTurn();
-        }
-    }
-    else if(currentPlayer == ai){
-        let i=floor(mouseX/w);
-        let j=floor(mouseY/h);
-        if(board[i][j]==''){
-            board[i][j]=ai;
-            currentPlayer=human;
-            // nextTurn();
+            nextTurn();
         }
     }
     positionOccupied++;
@@ -77,7 +76,6 @@ function checkWinner(){
 
     for(let i=0;i<3;i++){
         if(equals3(board[0][i], board[1][i], board[2][i]) ){
-            console.log("jklh");
             line( coord(0,i).a, coord(0,i).b, coord(1,i).a, coord(1,i).b );
             line( coord(1,i).a, coord(1,i).b, coord(2,i).a, coord(2,i).b );
             return board[0][i];
@@ -128,12 +126,9 @@ function draw() {
             }
         }
     }
-    // console.log(count++);
-    console.log(second());
     let winner=null;
     winner=checkWinner();
     if(winner!=null){
-
         console.log("winner is"+winner);
         noLoop();
     }
