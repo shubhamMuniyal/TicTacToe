@@ -24,7 +24,7 @@ function minimax(isMax, depth){
                 }
             }
         }
-        return bestMove;
+        return bestMove-depth;
     }
 
     else{
@@ -40,7 +40,7 @@ function minimax(isMax, depth){
                 }
             }
         }
-        return bestMove;
+        return bestMove+depth;
     }
     
 }
